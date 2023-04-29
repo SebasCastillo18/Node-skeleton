@@ -1,13 +1,13 @@
-const router = require('express').Router();
-const conversationServices = require('./conversations.services');
+const router = require("express").Router();
+const conversationServices = require("./conversations.services");
 
-const passportJwt = require('../middlewares/auth.middleware');
+const passportJwt = require("../middlewares/auth.middleware");
 
-router.router("/")
+router.route("/")
+    .post(
+        passportJwt.authenticate("jwt", { session: false }),
+        conversationServices.postNewConversation
+    );
 
-.post(
-    passportJwt.authenticate("jwt", { session: false}),
-    conversationServices.postNewConversation
-);
 
 module.exports = router

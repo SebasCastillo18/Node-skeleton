@@ -1,25 +1,31 @@
-const Conversations = require("../models/conversations.models");
+const uuid = require('uuid')
 
-const Users = require("../models/users.models");
+const Conversations = require('../models/conversations.models')
+const Users = require('../models/users.models')
+const Participants = require('../models/participants.models')
 
 const createConversation = async (conversationObj) => {
-    const userGuest = await Users.findOne(conversationObj.guestId);
+    const userGuest = await Users.findOne({
+        where: {
+            id: conversationObj.guestId
+        }
+    })
 
-    if (!userGuest) return false;
+    if(!userGuest) return false
 
     const newConversations = await Conversations.create({
-        id: UUID.v4(),
+        id: uuid.v4(),
         name: conversationObj.name,
         profileImage: conversationObj.profileImage,
-        isGroup: conversationObj.isGroup,
-    });
+        isGroup: conversationObj.isGroup
+    })
 
     await Participants.create({
-        id: UUID.v4(),
+        id: uuid.v4(),
         userId: conversationObj.ownerId,
         conversationId: newConversations.id,
-        isAdmin: true,
-    });
+        isAdmin: true
+    })
 
     await Participants.create({
         id: uuid.v4(),
@@ -27,13 +33,9 @@ const createConversation = async (conversationObj) => {
         conversationId: newConversations.id,
         isAdmin: false
     })
-
     return newConversations
 }
 
-createConversation({
-
-})
-
-.then(console.log)
-.catch(console.log)
+module.exports = {
+    createConversation
+}
